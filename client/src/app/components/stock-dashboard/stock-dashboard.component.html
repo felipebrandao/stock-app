@@ -1,0 +1,103 @@
+<div class="bg-background-light dark:bg-background-dark text-[#111813] dark:text-gray-100 min-h-screen flex flex-col overflow-x-hidden">
+  <header class="sticky top-0 z-50 w-full bg-surface-light dark:bg-surface-dark border-b border-[#f0f4f2] dark:border-[#2a3e30]">
+    <div class="px-4 md:px-10 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="text-primary size-8 flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl">inventory</span>
+        </div>
+        <h2 class="text-lg font-bold leading-tight tracking-tight dark:text-white">
+          RecipeManager <span class="text-gray-400 font-normal ml-2">| Estoque</span>
+        </h2>
+      </div>
+
+      <div class="hidden md:flex flex-1 justify-end gap-8 items-center">
+        <nav class="flex items-center gap-9">
+          <a class="text-sm font-medium hover:text-primary transition-colors dark:text-gray-300" href="#">Receitas</a>
+          <a class="text-sm font-medium text-primary border-b-2 border-primary pb-1" href="#">Estoque</a>
+          <a class="text-sm font-medium hover:text-primary transition-colors dark:text-gray-300" href="#">Configurações</a>
+        </nav>
+
+        <div class="flex items-center gap-4">
+          <button class="relative p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors" type="button">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border-2 border-white dark:border-surface-dark"></span>
+          </button>
+
+          <div
+            class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary/20"
+            style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDndNw5EEICMVaWt_JVEIBUonZ543lC21qepLkU52JYd6PvRTj3ptp4rVoI3stJqiazwmyd7YfgwPiC6pWwgca-PAF2tLfgtjuK1p5EgQ_UiK9J2el7NglYrWt2sOzqwupRzZcfTv0IJ3J5o4JEplh9cQZfBHntMmZrduVxdv-VBHOjMoMPdjG9gEuJPGMStZCtc5-ZXh2gY6hTJYZ78ujEyoNRk7-y0NXVDfhTJ4y7N5WGcyju1DTt2jQbK2bEWvyGm2VDArGMJZk");'
+          ></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 flex justify-center py-6 px-4 md:px-8">
+    <div class="w-full max-w-[1280px] flex flex-col gap-6 relative">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="flex flex-col gap-1">
+          <h1 class="text-2xl font-black leading-tight tracking-tight dark:text-white uppercase text-gray-800">Controle de Estoque Simplificado</h1>
+          <p class="text-[#61896f] dark:text-[#8baaa0] text-xs font-bold uppercase tracking-wider">Gestão Técnica e Rastreabilidade de Itens</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-[#111813] text-sm font-bold shadow-sm hover:shadow-md transition-all" type="button">
+            <span class="material-symbols-outlined text-[18px]">add_box</span>
+            <span>Novo Item</span>
+          </button>
+        </div>
+      </div>
+
+      <app-stock-summary-cards [summary]="(summary$ | async) ?? null"></app-stock-summary-cards>
+
+      <div class="rounded-xl bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] p-3 flex flex-col lg:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="size-8 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500">
+            <span class="material-symbols-outlined text-lg">receipt_long</span>
+          </div>
+          <div>
+            <h3 class="text-xs font-bold text-gray-900 dark:text-white uppercase">Gestão de Unidades</h3>
+            <p class="text-[10px] text-gray-500 dark:text-gray-400">Monitoramento por unidade e localização</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 bg-[#f0f4f2] dark:bg-[#102216] p-1 rounded-lg">
+          <button class="px-3 py-1 text-[10px] font-bold uppercase rounded bg-white dark:bg-surface-dark shadow-sm" type="button">Hoje</button>
+          <button class="px-3 py-1 text-[10px] font-bold uppercase rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-300" type="button">7 Dias</button>
+          <button class="px-3 py-1 text-[10px] font-bold uppercase rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-300" type="button">NFC-e</button>
+        </div>
+
+        <button class="flex items-center gap-2 px-3 py-1.5 border border-primary/40 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-300 hover:bg-primary/10 transition-colors uppercase" type="button">
+          <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
+          Scanner NFC-e
+        </button>
+      </div>
+
+      <app-search-bar
+        [categories]="categories"
+        (queryChange)="onQueryChange($event)"
+        (categoryChange)="onCategoryChange($event)"
+      ></app-search-bar>
+
+      <app-stock-table
+        [items]="(items$ | async) ?? []"
+        [expandedItemId]="(expandedItemId$ | async) ?? null"
+        [loading]="(loading$ | async) ?? false"
+        (toggleExpand)="onToggleExpand($event)"
+      ></app-stock-table>
+
+      <ng-container *ngIf="itemsPage$ | async as page">
+        <div
+          class="rounded-xl bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] p-3"
+        >
+          <app-paginator
+            [total]="page.total"
+            [page]="page.page"
+            [pageSize]="page.pageSize"
+            (pageChange)="onPageChange($event)"
+          ></app-paginator>
+        </div>
+      </ng-container>
+    </div>
+  </main>
+</div>

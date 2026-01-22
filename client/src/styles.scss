@@ -1,0 +1,44 @@
+/* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fonte base do design */
+body {
+  font-family: 'Manrope', sans-serif;
+}
+
+/* Scrollbar similar ao designer */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Helpers do designer */
+.sticky-search {
+  position: sticky;
+  top: 64px;
+  z-index: 40;
+}
+
+.row-expanded {
+  background-color: rgba(19, 236, 91, 0.02);
+}
+
+.nested-row:hover {
+  background-color: rgba(19, 236, 91, 0.05);
+}

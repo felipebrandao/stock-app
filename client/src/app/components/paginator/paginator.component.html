@@ -1,0 +1,31 @@
+<div class="flex items-center justify-between">
+  <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+    PÁGINA {{ page }} DE {{ totalPages }}
+    <span class="mx-2 text-gray-300">|</span>
+    {{ total }} ITENS
+  </p>
+
+  <div class="flex gap-1">
+    <button
+      class="flex items-center justify-center size-8 rounded border border-gray-200 dark:border-gray-700 transition-all"
+      [ngClass]="canGoPrev ? 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800' : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'"
+      type="button"
+      [disabled]="!canGoPrev"
+      (click)="prev()"
+      aria-label="Página anterior"
+    >
+      <span class="material-symbols-outlined text-lg">chevron_left</span>
+    </button>
+
+    <button
+      class="flex items-center justify-center size-8 rounded border border-gray-200 dark:border-gray-700 transition-all"
+      [ngClass]="canGoNext ? 'text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800' : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'"
+      type="button"
+      [disabled]="!canGoNext"
+      (click)="next()"
+      aria-label="Próxima página"
+    >
+      <span class="material-symbols-outlined text-lg">chevron_right</span>
+    </button>
+  </div>
+</div>

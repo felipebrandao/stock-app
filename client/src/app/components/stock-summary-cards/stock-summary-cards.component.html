@@ -1,0 +1,45 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <button class="flex flex-col gap-3 rounded-xl p-5 bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] shadow-sm hover:ring-2 hover:ring-primary/20 transition-all text-left group" type="button">
+    <div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+      <span class="text-[10px] font-black uppercase tracking-widest">Total de Itens</span>
+      <span class="material-symbols-outlined text-xl group-hover:text-primary">inventory_2</span>
+    </div>
+    <div class="flex items-end justify-between">
+      <p class="text-3xl font-black dark:text-white">{{ summary?.total ?? '—' }}</p>
+      <span class="text-[10px] font-bold px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded uppercase">Filtrar</span>
+    </div>
+  </button>
+
+  <button class="flex flex-col gap-3 rounded-xl p-5 bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] shadow-sm hover:ring-2 hover:ring-orange-400/20 transition-all text-left group border-l-4 border-l-orange-500" type="button">
+    <div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+      <span class="text-[10px] font-black uppercase tracking-widest">Estoque Baixo</span>
+      <span class="material-symbols-outlined text-xl group-hover:text-orange-400">warning</span>
+    </div>
+    <div class="flex items-end justify-between">
+      <p class="text-3xl font-black text-orange-500">{{ (summary?.low ?? null) !== null ? (summary?.low | number: '2.0-0') : '—' }}</p>
+      <span class="text-[10px] font-bold px-2 py-0.5 bg-orange-50 dark:bg-orange-950/30 text-orange-600 rounded uppercase">Filtrar</span>
+    </div>
+  </button>
+
+  <button class="flex flex-col gap-3 rounded-xl p-5 bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] shadow-sm hover:ring-2 hover:ring-red-400/20 transition-all text-left group border-l-4 border-l-red-500" type="button">
+    <div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+      <span class="text-[10px] font-black uppercase tracking-widest">Sem Estoque</span>
+      <span class="material-symbols-outlined text-xl group-hover:text-red-400">block</span>
+    </div>
+    <div class="flex items-end justify-between">
+      <p class="text-3xl font-black text-red-500">{{ (summary?.out ?? null) !== null ? (summary?.out | number: '2.0-0') : '—' }}</p>
+      <span class="text-[10px] font-bold px-2 py-0.5 bg-red-50 dark:bg-red-950/30 text-red-600 rounded uppercase">Filtrar</span>
+    </div>
+  </button>
+
+  <button class="flex flex-col gap-3 rounded-xl p-5 bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] shadow-sm hover:ring-2 hover:ring-blue-400/20 transition-all text-left group border-l-4 border-l-blue-500" type="button">
+    <div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+      <span class="text-[10px] font-black uppercase tracking-widest">Validade Próxima</span>
+      <span class="material-symbols-outlined text-xl group-hover:text-blue-400">history_toggle_off</span>
+    </div>
+    <div class="flex items-end justify-between">
+      <p class="text-3xl font-black text-blue-500">{{ (summary?.expSoon ?? null) !== null ? (summary?.expSoon | number: '2.0-0') : '—' }}</p>
+      <span class="text-[10px] font-bold px-2 py-0.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 rounded uppercase">Filtrar</span>
+    </div>
+  </button>
+</div>

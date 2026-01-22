@@ -1,0 +1,191 @@
+<div class="md:hidden">
+  <div *ngIf="loading" class="p-4 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+    Carregando...
+  </div>
+
+  <div *ngIf="!loading" class="flex flex-col gap-4">
+    <div *ngIf="!items.length" class="p-4 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+      Nenhum item encontrado.
+    </div>
+
+    <ng-container *ngIf="items.length">
+      <ng-container *ngIf="expandedBatches$ | async as expandedBatches">
+        <div
+          *ngFor="let item of items"
+          class="bg-surface-light dark:bg-surface-dark rounded-xl border border-[#dbe6df] dark:border-[#2a3e30] overflow-hidden shadow-sm border-l-4"
+          [ngClass]="statusCardBorderClass(item.status)"
+        >
+          <div class="p-4 flex flex-col gap-3">
+            <div class="flex justify-between items-start">
+              <div class="flex flex-col gap-1">
+                <h3
+                  class="font-black text-sm uppercase"
+                  [ngClass]="item.status === 'ESGOTADO' ? 'text-gray-500 dark:text-gray-400' : 'text-[#111813] dark:text-white'"
+                >
+                  {{ item.name }}
+                </h3>
+
+                <div class="flex gap-2 flex-wrap">
+                  <span
+                    class="px-2 py-0.5 rounded text-[8px] font-bold uppercase"
+                    [ngClass]="categoryBadgeClass(item.category)"
+                  >
+                    {{ item.category }}
+                  </span>
+                  <span
+                    class="px-2 py-0.5 rounded text-[8px] font-black uppercase"
+                    [ngClass]="statusBadgeClass(item.status)"
+                  >
+                    {{ item.status }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="text-right">
+                <p
+                  class="text-lg font-black leading-none"
+                  [ngClass]="item.status === 'ESGOTADO' ? 'text-gray-400 dark:text-gray-500' : 'text-[#111813] dark:text-white'"
+                >
+                  {{ item.totalQuantity }}
+                </p>
+                <p class="text-[9px] font-bold text-gray-400 uppercase">{{ item.unit }}</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="mt-1 flex items-center justify-center gap-1 py-1 text-[9px] font-black uppercase text-gray-400"
+              (click)="onToggle(item.id)"
+            >
+              <span>{{ expandedItemId === item.id ? 'Ocultar Detalhes das Unidades' : 'Ver Detalhes das Unidades' }}</span>
+              <span class="material-symbols-outlined text-sm">
+                {{ expandedItemId === item.id ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+              </span>
+            </button>
+
+            <div
+              *ngIf="expandedItemId === item.id && batchesForRow(item.id, expandedBatches).length"
+              class="mt-2 flex flex-col gap-4 border-t border-gray-100 dark:border-gray-800 pt-4"
+            >
+              <ng-container *ngFor="let b of batchesForRow(item.id, expandedBatches); let idx = index">
+                <div class="flex flex-col gap-3" [ngClass]="idx > 0 ? 'pt-4 border-t border-dashed border-gray-200 dark:border-gray-800' : ''">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-sm" [ngClass]="batchToneClass(b.label)">
+                      {{ batchIcon(b.label) }}
+                    </span>
+                    <span class="text-[10px] font-black uppercase" [ngClass]="batchTitleClass(b.label)">
+                      {{ (b.label || '').toUpperCase() }} ({{ (b.qtyLabel || '').toUpperCase() }})
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4 bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg">
+                    <div class="flex flex-col">
+                      <span class="text-[8px] text-gray-400 uppercase font-bold">
+                        {{ (b.label || '').toLowerCase().includes('em uso') ? 'Local/Início' : 'Local/Entrada' }}
+                      </span>
+                      <span class="text-[10px] font-bold text-gray-700 dark:text-gray-300">{{ b.locationLabel }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[8px] text-gray-400 uppercase font-bold">Vencimento</span>
+                      <span
+                        class="text-[10px] font-black"
+                        [ngClass]="isDangerExpiry(b.expiresAtTone) ? 'text-red-500' : 'text-gray-500'"
+                      >
+                        {{ b.expiresAtLabel }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <button
+                      type="button"
+                      class="w-full py-2.5 rounded text-[10px] font-black uppercase"
+                      [ngClass]="(b.label || '').toLowerCase().includes('em uso')
+                        ? 'bg-primary text-[#111813]'
+                        : 'border border-primary text-primary'"
+                    >
+                      Em Uso
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        class="py-2.5 rounded bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/30 text-[10px] font-black uppercase text-red-700 dark:text-red-400"
+                      >
+                        Dar Baixa
+                      </button>
+                      <button
+                        type="button"
+                        class="py-2.5 rounded bg-white dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] text-[10px] font-black uppercase text-gray-500"
+                      >
+                        Converter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<div class="hidden md:block">
+  <div class="w-full overflow-hidden rounded-xl border border-[#dbe6df] dark:border-[#2a3e30] bg-surface-light dark:bg-surface-dark shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse table-fixed">
+        <thead>
+          <tr class="border-b border-[#dbe6df] dark:border-[#2a3e30] bg-[#f8faf9] dark:bg-[#15261b]">
+            <th class="w-[40%] p-4 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Item</th>
+            <th class="w-[20%] p-4 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Categoria</th>
+            <th class="w-[20%] p-4 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 text-center">Quantidade Total</th>
+            <th class="w-[20%] p-4 text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Status Geral</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-[#dbe6df] dark:divide-[#2a3e30]">
+          <tr *ngIf="loading">
+            <td colspan="4" class="p-4 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+              Carregando...
+            </td>
+          </tr>
+
+          <ng-container *ngIf="!loading">
+            <ng-container *ngIf="items.length; else emptyStateDesktop">
+              <ng-container *ngIf="expandedBatches$ | async as expandedBatches">
+                <ng-container *ngFor="let item of items">
+                  <tr
+                    app-stock-row
+                    [item]="item"
+                    [expanded]="expandedItemId === item.id"
+                    [batches]="batchesForRow(item.id, expandedBatches)"
+                    (toggleExpand)="onToggle($event)"
+                    (click)="onToggle(item.id)"
+                  ></tr>
+
+                  <tr
+                    *ngIf="expandedItemId === item.id && batchesForRow(item.id, expandedBatches).length"
+                    class="bg-[#fcfdfc] dark:bg-[#162a1e]"
+                  >
+                    <td class="p-0 border-t-0" colspan="4">
+                      <app-stock-batch-detail [batches]="batchesForRow(item.id, expandedBatches)"></app-stock-batch-detail>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+
+            <ng-template #emptyStateDesktop>
+              <tr>
+                <td colspan="4" class="p-4 text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">
+                  Nenhum item encontrado.
+                </td>
+              </tr>
+            </ng-template>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

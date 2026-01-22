@@ -1,0 +1,31 @@
+<div class="sticky-search bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] rounded-xl shadow-md p-2">
+  <div class="flex flex-col md:flex-row gap-3">
+    <div class="relative flex-1 group">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <span class="material-symbols-outlined text-gray-400 text-lg group-focus-within:text-primary transition-colors">search</span>
+      </div>
+      <input
+        class="block w-full pl-10 pr-3 py-2 border-none rounded-lg bg-[#f0f4f2] dark:bg-[#102216] dark:text-white text-[11px] font-medium placeholder-gray-500 focus:ring-1 focus:ring-primary/50 transition-all uppercase"
+        placeholder="PESQUISAR ITEM (CMD + K)..."
+        type="text"
+        [value]="query"
+        (input)="onQueryInput(($any($event.target).value))"
+      />
+    </div>
+
+    <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+      <button
+        *ngFor="let c of categories"
+        type="button"
+        (click)="setCategory(c)"
+        [class]="
+          selectedCategory === c
+            ? 'flex items-center px-3 py-1.5 rounded-lg bg-gray-900 text-white dark:bg-primary dark:text-[#111813] text-[10px] font-bold whitespace-nowrap shadow-sm'
+            : 'flex items-center px-3 py-1.5 rounded-lg bg-[#f0f4f2] dark:bg-[#102216] text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 text-[10px] font-bold whitespace-nowrap transition-colors'
+        "
+      >
+        {{ c }}
+      </button>
+    </div>
+  </div>
+</div>
