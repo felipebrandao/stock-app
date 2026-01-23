@@ -36,14 +36,12 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🎬 NFC-e QR Reader initialized');
     this.scanStatus = ScanStatus.SCANNING;
     this.requestCameraAccess();
   }
 
   async requestCameraAccess(): Promise<void> {
     try {
-      console.log('📹 Requesting camera access...');
       this.hasPermission = undefined;
       this.errorMessage = '';
       this.scanStatus = ScanStatus.SCANNING;
@@ -54,19 +52,11 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
         }
       });
 
-      console.log('✅ Camera permission granted');
-      console.log('📸 Video tracks:', stream.getVideoTracks().length);
-
-      stream.getTracks().forEach(track => {
-        console.log('🎥 Track:', track.label, '- State:', track.readyState);
-        track.stop();
-      });
-
+      stream.getTracks().forEach(track => track.stop());
       this.hasPermission = true;
-      console.log('✓ hasPermission set to true');
 
-    } catch (error) {
-      console.error('❌ Error requesting camera access:', error);
+    } catch (error: any) {
+      console.error('Error requesting camera access:', error);
       this.hasPermission = false;
       this.errorMessage = 'Permissão para acessar a câmera foi negada. Por favor, habilite nas configurações do navegador.';
       this.scanStatus = ScanStatus.ERROR;
@@ -74,15 +64,9 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('🛑 Component destroyed');
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
-    console.log('📷 onCamerasFound - Cameras:', devices.length);
-    devices.forEach((dev, i) => {
-      console.log(`  ${i + 1}. ${dev.label || 'Camera ' + (i + 1)} (${dev.deviceId.substr(0, 20)}...)`);
-    });
-
     this.availableDevices = devices;
     this.hasDevices = Boolean(devices && devices.length);
 
@@ -91,19 +75,17 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
       device.label.toLowerCase().includes('traseira') ||
       device.label.toLowerCase().includes('rear')
     );
+
     this.currentDevice = backCamera || devices[0];
-    console.log('🎯 Selected camera:', this.currentDevice?.label || 'Unknown');
   }
 
   onCamerasNotFound(): void {
-    console.log('❌ onCamerasNotFound - No cameras detected');
     this.hasDevices = false;
     this.errorMessage = 'Nenhuma câmera encontrada no dispositivo.';
     this.scanStatus = ScanStatus.ERROR;
   }
 
   onHasPermission(has: boolean): void {
-    console.log('🔐 onHasPermission:', has);
     this.hasPermission = has;
     if (!has) {
       this.errorMessage = 'Permissão para acessar a câmera foi negada. Por favor, habilite nas configurações do navegador.';
@@ -112,15 +94,11 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
   }
 
   onTorchCompatible(isCompatible: boolean): void {
-    console.log('🔦 Torch compatible:', isCompatible);
     this.torchAvailable$ = isCompatible;
   }
 
   onScanSuccess(resultString: string): void {
-    console.log('✅ QR Code scanned:', resultString.substring(0, 50) + '...');
-
     if (this.isProcessing || this.scanStatus === ScanStatus.SUCCESS) {
-      console.log('⏭️ Already processing, skipping...');
       return;
     }
 
@@ -206,9 +184,6 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  manualCapture(): void {
-    console.log('Manual capture triggered');
-  }
 
   formatCurrency(value: number): string {
     return new Intl.NumberFormat('pt-BR', {

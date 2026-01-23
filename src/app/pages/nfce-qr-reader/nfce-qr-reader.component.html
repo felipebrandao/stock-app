@@ -31,13 +31,7 @@
     </div>
 
     <div *ngIf="showScanner" class="mb-8">
-      <div class="relative w-full aspect-[4/3] bg-black rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-200 dark:border-gray-700">
-
-        <div class="absolute top-2 left-2 bg-black/70 text-white text-xs p-2 rounded z-50 font-mono">
-          <div>hasPermission: {{ hasPermission }}</div>
-          <div>hasDevices: {{ hasDevices }}</div>
-          <div>currentDevice: {{ currentDevice?.label || 'none' }}</div>
-        </div>
+      <div class="relative w-full aspect-[4/3] bg-black rounded-xl overflow-hidden shadow-2xl border-4 border-gray-200 dark:border-gray-700 group ring-4 ring-black/5 dark:ring-white/5">
 
         <zxing-scanner
           *ngIf="hasPermission === true"
@@ -53,8 +47,8 @@
           class="w-full h-full"
         ></zxing-scanner>
 
-        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <div class="relative size-72 border-2 border-green-400 rounded-3xl shadow-[0_0_0_9999px_rgba(0,0,0,0.6)] flex items-center justify-center">
+        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+          <div class="relative w-72 h-72 border-2 border-green-400 rounded-3xl shadow-[0_0_0_9999px_rgba(0,0,0,0.7)] flex items-center justify-center">
             <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-400 -mt-1 -ml-1 rounded-tl-lg"></div>
             <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-400 -mt-1 -mr-1 rounded-tr-lg"></div>
             <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-400 -mb-1 -ml-1 rounded-bl-lg"></div>
@@ -63,41 +57,31 @@
             <div class="w-full h-1 bg-green-400 shadow-[0_0_15px_rgba(74,222,128,0.8)] absolute animate-[scan_2s_ease-in-out_infinite]"></div>
           </div>
 
-          <p class="mt-8 text-white font-medium text-lg drop-shadow-md bg-black/50 px-6 py-3 rounded-full backdrop-blur-sm">
+          <p class="mt-8 text-white font-medium text-base drop-shadow-lg z-10 bg-black/60 px-6 py-2 rounded-full backdrop-blur-sm">
             Posicione o QR Code dentro da moldura
           </p>
         </div>
 
-        <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-20">
+        <div class="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-20 pointer-events-auto">
           <button
             *ngIf="torchAvailable$"
             (click)="toggleTorch()"
-            [ngClass]="torchEnabled ? 'bg-yellow-500' : 'bg-white bg-opacity-20'"
-            class="p-3 rounded-full backdrop-blur-md hover:bg-opacity-30 text-white transition-all border border-white border-opacity-30"
-            title="Ligar/Desligar Lanterna">
+            [ngClass]="torchEnabled ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-white/20 hover:bg-white/30'"
+            class="p-4 rounded-full backdrop-blur-md text-white transition-all border border-white/30 shadow-lg"
+            title="Ligar Lanterna">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M9 2h6l1 4H8l1-4zm7 4l1 2v4h-1c0 2.76-2.24 5-5 5s-5-2.24-5-5H5V8l1-2h10zM12 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/>
             </svg>
           </button>
 
           <button
-            (click)="manualCapture()"
-            class="p-4 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg transition-all transform hover:scale-105 active:scale-95"
-            title="Capturar">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </button>
-
-          <button
             *ngIf="availableDevices.length > 1"
             (click)="switchCamera()"
-            class="p-3 rounded-full bg-white bg-opacity-20 backdrop-blur-md hover:bg-opacity-30 text-white transition-all border border-white border-opacity-30"
+            class="p-4 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 text-white transition-all border border-white/30 shadow-lg"
             title="Trocar Câmera">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10l2 2 4-4"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
           </button>
         </div>
