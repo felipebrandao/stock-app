@@ -12,8 +12,8 @@ import { NFCeQRCodeData, NFCeData, ScanStatus } from '../../models/nfce.models';
 export class NfceQrReaderComponent implements OnInit, OnDestroy {
   availableDevices: MediaDeviceInfo[] = [];
   currentDevice?: MediaDeviceInfo;
-  hasDevices = false;
-  hasPermission = false;
+  hasDevices?: boolean;
+  hasPermission?: boolean;
 
   allowedFormats = [BarcodeFormat.QR_CODE];
   torchEnabled = false;
@@ -37,6 +37,24 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.scanStatus = ScanStatus.SCANNING;
+    this.requestCameraAccess();
+  }
+
+  async requestCameraAccess(): Promise<void> {
+    try {
+      this.hasPermission = undefined;
+      this.errorMessage = '';
+      this.scanStatus = ScanStatus.SCANNING;
+
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach(track => track.stop());
+      this.hasPermission = true;
+    } catch (error) {
+      console.error('Error requesting camera access:', error);
+      this.hasPermission = false;
+      this.errorMessage = 'Permissão para acessar a câmera foi negada. Por favor, habilite nas configurações do navegador.';
+      this.scanStatus = ScanStatus.ERROR;
+    }
   }
 
   ngOnDestroy(): void {
