@@ -33,8 +33,14 @@
     <div *ngIf="showScanner" class="mb-8">
       <div class="relative w-full aspect-[4/3] bg-black rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-200 dark:border-gray-700">
 
+        <div class="absolute top-2 left-2 bg-black/70 text-white text-xs p-2 rounded z-50 font-mono">
+          <div>hasPermission: {{ hasPermission }}</div>
+          <div>hasDevices: {{ hasDevices }}</div>
+          <div>currentDevice: {{ currentDevice?.label || 'none' }}</div>
+        </div>
+
         <zxing-scanner
-          *ngIf="hasPermission && hasDevices"
+          *ngIf="hasPermission === true"
           [formats]="allowedFormats"
           [device]="currentDevice"
           [torch]="torchEnabled"
