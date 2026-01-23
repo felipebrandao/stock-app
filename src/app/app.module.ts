@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StockPageComponent } from './pages/stock-page/stock-page.component';
 import { StockDashboardComponent } from './components/stock-dashboard/stock-dashboard.component';
@@ -11,6 +14,7 @@ import { StockTableComponent } from './components/stock-table/stock-table.compon
 import { StockRowComponent } from './components/stock-row/stock-row.component';
 import { StockBatchDetailComponent } from './components/stock-batch-detail/stock-batch-detail.component';
 import { PaginatorComponent } from './components/paginator/paginator.component';
+import { NfceQrReaderComponent } from './pages/nfce-qr-reader/nfce-qr-reader.component';
 
 @NgModule({
   declarations: [
@@ -22,11 +26,15 @@ import { PaginatorComponent } from './components/paginator/paginator.component';
     StockTableComponent,
     StockRowComponent,
     StockBatchDetailComponent,
-    PaginatorComponent
+    PaginatorComponent,
+    NfceQrReaderComponent
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    CommonModule,
+    AppRoutingModule,
+    FormsModule,
+    ZXingScannerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

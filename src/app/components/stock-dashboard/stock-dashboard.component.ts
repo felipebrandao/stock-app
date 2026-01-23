@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { PagedResult, StockItem, StockSummary } from '../../models/stock.models';
 import { StockStoreService } from '../../state/stock-store.service';
@@ -17,7 +18,10 @@ export class StockDashboardComponent {
 
   readonly categories = ['TODOS', 'LATICÍNIOS', 'HORTIFRUTI'];
 
-  constructor(private readonly store: StockStoreService) {}
+  constructor(
+    private readonly store: StockStoreService,
+    private readonly router: Router
+  ) {}
 
   onQueryChange(query: string) {
     this.store.setQuery(query);
@@ -40,5 +44,9 @@ export class StockDashboardComponent {
 
   onPageChange(page: number) {
     this.store.setPage(page);
+  }
+
+  navigateToQRReader() {
+    this.router.navigate(['/nfce-reader']);
   }
 }

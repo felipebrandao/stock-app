@@ -1,0 +1,70 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+::ng-deep zxing-scanner {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.status-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(107, 114, 128, 0.7);
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  ::ng-deep zxing-scanner video {
+    filter: brightness(0.9);
+  }
+}
+
+@media (max-width: 768px) {
+  .aspect-\[4\/3\] {
+    aspect-ratio: 1 / 1;
+  }
+}
