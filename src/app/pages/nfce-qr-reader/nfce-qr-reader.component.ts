@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { BarcodeFormat } from '@zxing/library';
 import { NfceService } from '../../services/nfce.service';
-import { NFCeQRCodeData, NFCeData, ScanStatus } from '../../models/nfce.models';
+import { NFCeQRCodeData, ScanStatus, ImportNfceRequest } from '../../models/nfce.models';
 
 @Component({
   selector: 'app-nfce-qr-reader',
@@ -23,12 +23,19 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
   ScanStatus = ScanStatus;
 
   scannedData?: NFCeQRCodeData;
-  nfceData?: NFCeData;
+  nfceImportId?: string; // ID da importação retornado pela API
   errorMessage = '';
   successMessage = '';
 
   showScanner = true;
   isProcessing = false;
+
+  // Controle de abas
+  activeTab: 'scanner' | 'manual' = 'scanner';
+
+  // Campos de entrada manual
+  manualUrl = '';
+  manualAccessKey = '';
 
   constructor(
     private nfceService: NfceService,
@@ -116,16 +123,28 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
     this.scannedData = qrCodeData;
     this.successMessage = 'QR Code lido com sucesso! Buscando dados da nota fiscal...';
 
-    this.nfceService.fetchNFCeData(qrCodeData.chaveAcesso).subscribe({
-      next: (data) => {
-        this.nfceData = data;
+    // Usar API real
+    const request: ImportNfceRequest = {
+      qrCodeUrl: qrCodeData.url || undefined,
+      accessKey: qrCodeData.chaveAcesso
+    };
+
+    this.nfceService.importNfce(request).subscribe({
+      next: (response) => {
+        this.nfceImportId = response.id;
         this.scanStatus = ScanStatus.SUCCESS;
-        this.successMessage = 'Dados da NFC-e carregados com sucesso!';
+        this.successMessage = 'Leitura realizada com sucesso! As informações foram capturadas e enviadas para o sistema. Você será notificado assim que a importação for concluída.';
         this.isProcessing = false;
+
+        // Redirecionar para a página de estoque após 3 segundos
+        setTimeout(() => {
+          this.router.navigate(['/stock']);
+        }, 3000);
       },
       error: (error) => {
-        console.error('Error fetching NFC-e data:', error);
-        this.onScanError('Erro ao buscar dados da nota fiscal. Tente novamente.');
+        console.error('Error importing NFC-e:', error);
+        const errorMsg = error.error?.message || error.message || 'Erro ao buscar dados da nota fiscal.';
+        this.onScanError(errorMsg + ' Tente novamente.');
         this.isProcessing = false;
       }
     });
@@ -159,45 +178,111 @@ export class NfceQrReaderComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.successMessage = '';
     this.scannedData = undefined;
-    this.nfceData = undefined;
+    this.nfceImportId = undefined;
     this.isProcessing = false;
   }
 
-  importToStock(): void {
-    if (!this.nfceData) return;
+  switchTab(tab: 'scanner' | 'manual'): void {
+    this.activeTab = tab;
 
+    if (tab === 'manual') {
+      this.showScanner = false;
+    } else {
+      // Quando voltar para scanner, sempre exibir o scanner
+      if (this.scanStatus === ScanStatus.SUCCESS || this.scanStatus === ScanStatus.ERROR) {
+        this.resetScanner();
+      } else {
+        this.showScanner = true;
+      }
+    }
+  }
+
+  processManualEntry(): void {
+    console.log('processManualEntry called');
+    console.log('manualUrl:', this.manualUrl);
+    console.log('manualAccessKey:', this.manualAccessKey);
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    let qrCodeData: NFCeQRCodeData | null = null;
+
+    // Tentar processar URL primeiro
+    if (this.manualUrl.trim()) {
+      console.log('Trying to parse URL');
+      qrCodeData = this.nfceService.parseQRCode(this.manualUrl.trim());
+      console.log('Parsed QR Code from URL:', qrCodeData);
+    }
+    // Se não houver URL, tentar processar chave de acesso
+    else if (this.manualAccessKey.trim()) {
+      const cleanKey = this.manualAccessKey.replace(/\s/g, '');
+      console.log('Clean key:', cleanKey, 'Length:', cleanKey.length);
+      if (cleanKey.length === 44 && /^\d+$/.test(cleanKey)) {
+        qrCodeData = {
+          chaveAcesso: cleanKey,
+          url: ''
+        };
+        console.log('Created QR Code from access key:', qrCodeData);
+      }
+    }
+
+    if (!qrCodeData) {
+      console.log('No valid QR code data');
+      this.errorMessage = 'Por favor, insira uma URL válida ou uma chave de acesso de 44 dígitos.';
+      this.scanStatus = ScanStatus.ERROR;
+      return;
+    }
+
+    console.log('Starting API call with:', qrCodeData);
     this.isProcessing = true;
-    this.nfceService.importToStock(this.nfceData).subscribe({
-      next: () => {
-        this.successMessage = 'Produtos importados para o estoque com sucesso!';
-        this.isProcessing = false;
+    this.scanStatus = ScanStatus.PROCESSING;
+    this.scannedData = qrCodeData;
+    this.successMessage = 'Processando dados da NFC-e...';
 
+    // Usar API real
+    const request: ImportNfceRequest = {
+      qrCodeUrl: qrCodeData.url || undefined,
+      accessKey: qrCodeData.chaveAcesso
+    };
+
+    console.log('API Request:', request);
+    this.nfceService.importNfce(request).subscribe({
+      next: (response) => {
+        console.log('API Response:', response);
+        this.nfceImportId = response.id;
+        this.scanStatus = ScanStatus.SUCCESS;
+        this.successMessage = 'Leitura realizada com sucesso! As informações foram capturadas e enviadas para o sistema. Você será notificado assim que a importação for concluída.';
+        this.isProcessing = false;
+        this.manualUrl = '';
+        this.manualAccessKey = '';
+
+        // Redirecionar para a página de estoque após 3 segundos
         setTimeout(() => {
-          this.resetScanner();
-        }, 2000);
+          this.router.navigate(['/stock']);
+        }, 3000);
       },
       error: (error) => {
-        console.error('Error importing to stock:', error);
-        this.errorMessage = 'Erro ao importar produtos. Tente novamente.';
+        console.error('Error importing NFC-e:', error);
+        const errorMsg = error.error?.message || error.message || 'Erro ao buscar dados da nota fiscal.';
+        this.errorMessage = errorMsg + ' Verifique os dados informados e tente novamente.';
+        this.scanStatus = ScanStatus.ERROR;
         this.isProcessing = false;
       }
     });
   }
 
+  formatAccessKey(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, '');
 
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
+    if (value.length > 44) {
+      value = value.substring(0, 44);
+    }
+
+    // Formatar com espaços a cada 4 dígitos
+    this.manualAccessKey = value.match(/.{1,4}/g)?.join(' ') || value;
   }
 
-  formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('pt-BR', {
-      dateStyle: 'short',
-      timeStyle: 'short'
-    }).format(new Date(date));
-  }
 
   navigateBack(): void {
     this.router.navigate(['/stock']);

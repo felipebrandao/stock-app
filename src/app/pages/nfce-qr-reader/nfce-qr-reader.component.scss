@@ -1,4 +1,4 @@
-:host {
+ :host {
   display: block;
   width: 100%;
   min-height: 100vh;
@@ -49,6 +49,27 @@
       background-color: rgba(107, 114, 128, 0.7);
     }
   }
+}
+
+@keyframes scan {
+  0%, 100% {
+    top: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scan {
+  animation: scan 2s ease-in-out infinite;
 }
 
 @keyframes slideDown {

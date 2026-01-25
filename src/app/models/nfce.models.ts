@@ -1,3 +1,64 @@
+// Backend API Models
+export interface NfceItemResponse {
+  id: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  productId?: string;
+}
+
+export interface NfceResponse {
+  id: string;
+  qrCodeUrl?: string;
+  accessKey: string;
+  storeName?: string;
+  status: string;
+  purchaseDate?: string; // ISO date format
+  totalValue?: number;
+  items: NfceItemResponse[];
+}
+
+export interface ImportNfceRequest {
+  qrCodeUrl?: string;
+  accessKey?: string;
+}
+
+export interface NfceImportReviewItemResponse {
+  id: string;
+  itemNumber: number;
+  description: string;
+  ean?: string;
+  unit: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  productId?: string;
+  status: string;
+  expiryDate?: string; // ISO date format
+  locationId?: string;
+}
+
+export interface NfceImportReviewResponse {
+  id: string;
+  status: string;
+  items: NfceImportReviewItemResponse[];
+}
+
+export interface UpdateNfceImportReviewItemRequest {
+  id: string;
+  productId?: string;
+  quantity?: number;
+  expiryDate?: string; // ISO date format
+  locationId?: string;
+  saveMapping?: boolean;
+}
+
+export interface UpdateNfceImportReviewRequest {
+  items: UpdateNfceImportReviewItemRequest[];
+}
+
+// Frontend UI Models (mantidos para compatibilidade)
 export interface NFCeQRCodeData {
   chaveAcesso: string;
   url: string;
