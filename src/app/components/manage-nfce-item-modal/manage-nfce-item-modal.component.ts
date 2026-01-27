@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NfceImportReviewItemResponse } from '../../models/nfce.models';
+import { ProductResponse } from '../../models/stock.models';
+import { NfceItemContext } from '../add-item-modal/add-item-modal.component';
 
 @Component({
   selector: 'app-manage-nfce-item-modal',
@@ -18,6 +20,9 @@ export class ManageNfceItemModalComponent {
   locationId = '';
   expiryDate = '';
   status = 'CLOSED';
+
+  isAddItemModalOpen = false;
+  nfceItemContext?: NfceItemContext;
 
   units = [
     { value: 'un', label: 'Unidade (UN)' },
@@ -52,6 +57,28 @@ export class ManageNfceItemModalComponent {
       status: this.status
     };
     this.confirm.emit(data);
+  }
+
+  openAddItemModal() {
+    if (this.item) {
+      this.nfceItemContext = {
+        description: this.item.description,
+        unit: this.item.unit,
+        quantity: this.item.quantity
+      };
+      this.isAddItemModalOpen = true;
+    }
+  }
+
+  closeAddItemModal() {
+    this.isAddItemModalOpen = false;
+    this.nfceItemContext = undefined;
+  }
+
+  onItemCreated(product: ProductResponse) {
+    console.log('Novo produto criado:', product);
+    this.productSearch = product.name;
+    this.closeAddItemModal();
   }
 
   formatCurrency(value: number): string {

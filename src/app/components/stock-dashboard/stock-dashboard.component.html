@@ -9,7 +9,7 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-[#111813] text-sm font-bold shadow-sm hover:shadow-md transition-all" type="button">
+          <button (click)="openAddItemModal()" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-primary text-[#111813] text-sm font-bold shadow-sm hover:shadow-md transition-all" type="button">
             <span class="material-symbols-outlined text-[18px]">add_box</span>
             <span>Novo Item</span>
           </button>
@@ -69,3 +69,10 @@
     </div>
   </main>
 </div>
+
+<app-add-item-modal
+  [isOpen]="isAddItemModalOpen"
+  (close)="closeAddItemModal()"
+  (itemCreated)="onItemCreated($event)"
+></app-add-item-modal>
+

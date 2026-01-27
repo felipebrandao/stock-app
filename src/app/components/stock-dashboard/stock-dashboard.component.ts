@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { PagedResult, StockItem, StockSummary } from '../../models/stock.models';
+import { PagedResult, StockItem, StockSummary, ProductResponse } from '../../models/stock.models';
 import { StockStoreService } from '../../state/stock-store.service';
 import { NfceService } from '../../services/nfce.service';
 
@@ -19,6 +19,8 @@ export class StockDashboardComponent implements OnInit {
 
   readonly categories = ['TODOS', 'LATICÍNIOS', 'HORTIFRUTI'];
   pendingNfceCount = 0;
+
+  isAddItemModalOpen = false;
 
   constructor(
     private readonly store: StockStoreService,
@@ -71,4 +73,32 @@ export class StockDashboardComponent implements OnInit {
   navigateToNFCeHistory() {
     this.router.navigate(['/nfce-history']);
   }
+
+  openAddItemModal() {
+    this.isAddItemModalOpen = true;
+  }
+
+  closeAddItemModal() {
+    this.isAddItemModalOpen = false;
+  }
+
+  onItemCreated(product: ProductResponse) {
+    console.log('Novo produto criado:', product);
+
+    const currentFilter = { ...DEFAULT_FILTER };
+    this.store.setPage(1);
+
+    this.closeAddItemModal();
+
+    alert(`Produto "${product.name}" criado com sucesso!`);
+  }
 }
+
+const DEFAULT_FILTER = {
+  query: '',
+  categories: [],
+  status: [],
+  page: 1,
+  pageSize: 50
+};
+

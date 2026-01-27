@@ -1,1 +1,143 @@
-<p>add-item-modal works!</p>
+<div *ngIf="isOpen"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111813]/60 backdrop-blur-sm transition-all duration-300"
+     (click)="onClose()">
+
+  <div class="relative w-full max-w-2xl bg-white dark:bg-[#1a2e22] rounded-2xl shadow-2xl flex flex-col max-h-[90vh] animate-[scale-in_0.2s_ease-out]"
+       (click)="$event.stopPropagation()">
+
+    <div class="flex items-start justify-between p-6 pb-2 border-b border-transparent">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-[#111813] dark:text-white tracking-tight text-2xl font-bold leading-tight">
+          Adicionar Novo Item
+        </h2>
+        <p class="text-[#61896f] text-sm font-normal leading-normal">
+          Cadastre um novo item no estoque baseado nos dados da nota fiscal.
+        </p>
+      </div>
+      <button (click)="onClose()"
+              class="group p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
+        <span class="material-symbols-outlined !text-[24px]">close</span>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-6 pt-2 modal-scroll">
+
+      <div *ngIf="nfceContext"
+           class="mb-6 rounded-lg bg-primary/10 border border-primary/20 p-4 flex gap-3 items-start">
+        <span class="material-symbols-outlined text-green-700 dark:text-green-400 mt-0.5 !text-[20px]">
+          receipt_long
+        </span>
+        <div>
+          <p class="text-green-800 dark:text-green-300 text-xs font-bold uppercase tracking-wider mb-1">
+            Dados da NFC-e
+          </p>
+          <p class="text-[#111813] dark:text-gray-200 text-sm font-medium leading-relaxed">
+            Descrição Original: "{{ nfceContext.description }}"
+          </p>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage"
+           class="mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 flex gap-3 items-start">
+        <span class="material-symbols-outlined text-red-600 dark:text-red-400 mt-0.5 !text-[20px]">
+          error
+        </span>
+        <p class="text-red-800 dark:text-red-300 text-sm">{{ errorMessage }}</p>
+      </div>
+
+      <div class="flex flex-col gap-5">
+
+        <div class="flex flex-col gap-2">
+          <label class="text-[#111813] dark:text-gray-200 text-base font-medium leading-normal">
+            Nome do Item
+          </label>
+          <input type="text"
+                 [(ngModel)]="itemName"
+                 [autofocus]="true"
+                 class="form-input w-full rounded-lg text-[#111813] dark:text-white border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-[#14231a] focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 text-base placeholder:text-[#61896f]"
+                 placeholder="Digite o nome do item" />
+          <p class="text-xs text-[#61896f]" *ngIf="nfceContext">
+            O nome foi sugerido com base na descrição da nota. Edite se necessário.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[#111813] dark:text-gray-200 text-base font-medium leading-normal">
+              Categoria
+            </label>
+            <div class="relative">
+              <select [(ngModel)]="selectedCategoryId"
+                      class="form-select w-full appearance-none rounded-lg text-[#111813] dark:text-white border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-[#14231a] focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 pr-10 text-base">
+                <option value="" disabled>Selecione uma categoria</option>
+                <option *ngFor="let category of categories" [value]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#61896f]">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <label class="text-[#111813] dark:text-gray-200 text-base font-medium leading-normal">
+              Unidade Padrão
+            </label>
+            <div class="relative">
+              <select [(ngModel)]="selectedUnit"
+                      class="form-select w-full appearance-none rounded-lg text-[#111813] dark:text-white border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-[#14231a] focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 pr-10 text-base">
+                <option value="" disabled>Selecione (ex: KG, L)</option>
+                <option *ngFor="let unit of units" [value]="unit.value">
+                  {{ unit.label }}
+                </option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#61896f]">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
+                  <path d="M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="flex flex-col gap-2">
+            <label class="text-[#111813] dark:text-gray-200 text-base font-medium leading-normal flex items-center gap-2">
+              Estoque Mínimo
+              <span class="text-xs font-normal text-[#61896f] bg-[#f6f8f6] dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                Opcional
+              </span>
+            </label>
+            <input type="number"
+                   [(ngModel)]="minStock"
+                   min="0"
+                   class="form-input w-full rounded-lg text-[#111813] dark:text-white border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-[#14231a] focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 text-base placeholder:text-[#61896f]"
+                   placeholder="0" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="p-6 border-t border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row gap-3 justify-end items-center bg-gray-50/50 dark:bg-black/20 rounded-b-2xl">
+      <button (click)="onClose()"
+              [disabled]="isSaving"
+              class="w-full sm:w-auto h-12 px-6 rounded-lg text-slate-600 dark:text-gray-300 font-medium text-base hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+        Cancelar
+      </button>
+      <button (click)="onSave()"
+              [disabled]="!isFormValid() || isSaving"
+              class="w-full sm:w-auto h-12 px-6 rounded-lg bg-primary text-[#0a2e16] font-bold text-base hover:bg-[#0fdc53] transition-all shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-[#1a2e22] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined !text-[20px]" *ngIf="!isSaving">save</span>
+        <span class="material-symbols-outlined !text-[20px] animate-spin" *ngIf="isSaving">progress_activity</span>
+        {{ isSaving ? 'Salvando...' : (nfceContext ? 'Salvar e Vincular' : 'Salvar') }}
+      </button>
+    </div>
+
+  </div>
+</div>
