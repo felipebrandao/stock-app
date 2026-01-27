@@ -7,7 +7,8 @@ import {
   NfceResponse,
   NfceImportReviewResponse,
   ImportNfceRequest,
-  UpdateNfceImportReviewRequest
+  UpdateNfceImportReviewRequest,
+  NfceHistoryPageResponse
 } from '../models/nfce.models';
 
 @Injectable({
@@ -51,6 +52,17 @@ export class NfceService {
    */
   approveImport(id: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/imports/${id}/approve`, {});
+  }
+
+  /**
+   * Busca o histórico de importações de NFCe
+   * @param status Filtro de status (opcional, default: 'ALL')
+   * @param page Número da página (opcional, default: 0)
+   * @param size Tamanho da página (opcional, default: 10)
+   */
+  getHistory(status: string = 'ALL', page: number = 0, size: number = 10): Observable<NfceHistoryPageResponse> {
+    const params: any = { status, page: page.toString(), size: size.toString() };
+    return this.http.get<NfceHistoryPageResponse>(`${this.baseUrl}/history`, { params });
   }
 
   // ==================== MÉTODOS UTILITÁRIOS (mantidos) ====================

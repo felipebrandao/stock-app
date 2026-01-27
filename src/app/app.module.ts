@@ -27,6 +27,7 @@ import { AddItemModalComponent } from './components/add-item-modal/add-item-moda
 import { ManageNfceItemModalComponent } from './components/manage-nfce-item-modal/manage-nfce-item-modal.component';
 import { ConfirmRemovalModalComponent } from './components/confirm-removal-modal/confirm-removal-modal.component';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
+import { FilterPipe } from './pipes/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { AppHeaderComponent } from './components/app-header/app-header.component
     AddItemModalComponent,
     ManageNfceItemModalComponent,
     ConfirmRemovalModalComponent,
-    AppHeaderComponent
+    AppHeaderComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,

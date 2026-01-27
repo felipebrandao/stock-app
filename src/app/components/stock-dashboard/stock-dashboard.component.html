@@ -18,27 +18,27 @@
 
       <app-stock-summary-cards [summary]="(summary$ | async) ?? null"></app-stock-summary-cards>
 
-      <div class="rounded-xl bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] p-3 flex flex-col lg:flex-row items-center justify-between gap-4">
+      <div class="rounded-xl bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] p-4 flex flex-col lg:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-          <div class="size-8 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500">
-            <span class="material-symbols-outlined text-lg">receipt_long</span>
+          <div class="size-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500">
+            <span class="material-symbols-outlined text-xl text-primary">receipt_long</span>
           </div>
           <div>
-            <h3 class="text-xs font-bold text-gray-900 dark:text-white uppercase">Gestão de Unidades</h3>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400">Monitoramento por unidade e localização</p>
+            <h3 class="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none mb-1">INFORMAÇÕES DE NFC-E</h3>
+            <p class="text-[11px] font-medium text-gray-500 dark:text-gray-400">Gerencie o processamento de notas fiscais e visualize o histórico de importações</p>
           </div>
         </div>
-
-        <div class="flex items-center gap-1 bg-[#f0f4f2] dark:bg-[#102216] p-1 rounded-lg">
-          <button class="px-3 py-1 text-[10px] font-bold uppercase rounded bg-white dark:bg-surface-dark shadow-sm" type="button">Hoje</button>
-          <button class="px-3 py-1 text-[10px] font-bold uppercase rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-300" type="button">7 Dias</button>
-          <button class="px-3 py-1 text-[10px] font-bold uppercase rounded text-gray-500 hover:text-gray-800 dark:hover:text-gray-300" type="button">NFC-e</button>
+        <div class="flex items-center gap-3">
+          <button (click)="navigateToNFCeHistory()" class="relative flex items-center gap-2 px-4 py-2 border border-primary/40 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-300 hover:bg-primary/10 transition-colors uppercase" type="button">
+            <span class="material-symbols-outlined text-sm">history</span>
+            Ver Histórico
+            <span *ngIf="pendingNfceCount > 0" class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold border-2 border-surface-light dark:border-surface-dark shadow-sm">{{ pendingNfceCount }}</span>
+          </button>
+          <button (click)="navigateToQRReader()" class="flex items-center gap-2 px-4 py-2 bg-[#111813] dark:bg-primary dark:text-[#111813] text-white rounded-lg text-[10px] font-bold hover:opacity-90 transition-colors uppercase shadow-sm" type="button">
+            <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
+            Scanner NFC-e
+          </button>
         </div>
-
-        <button (click)="navigateToQRReader()" class="flex items-center gap-2 px-3 py-1.5 border border-primary/40 rounded-lg text-[10px] font-bold text-gray-700 dark:text-gray-300 hover:bg-primary/10 transition-colors uppercase" type="button">
-          <span class="material-symbols-outlined text-sm">qr_code_scanner</span>
-          Scanner NFC-e
-        </button>
       </div>
 
       <app-search-bar

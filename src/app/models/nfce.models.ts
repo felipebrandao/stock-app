@@ -58,6 +58,32 @@ export interface UpdateNfceImportReviewRequest {
   items: UpdateNfceImportReviewItemRequest[];
 }
 
+// History Models
+export interface NfceHistoryResponse {
+  id: string;
+  accessKey: string;
+  documentNumber: string;
+  importedAt: string; // ISO date-time format
+  processedAt?: string; // ISO date-time format
+  status: string;
+  errorMessage?: string;
+  itemCount: number;
+  itemsSummary: string;
+  totalValue: number;
+}
+
+export interface NfceHistoryPageResponse {
+  items: NfceHistoryResponse[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  totalImported: number;
+  totalProcessed: number;
+  totalPending: number;
+  totalErrors: number;
+}
+
 // Frontend UI Models (mantidos para compatibilidade)
 export interface NFCeQRCodeData {
   chaveAcesso: string;

@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { PagedResult, StockItem, StockSummary } from '../../models/stock.models';
 import { StockStoreService } from '../../state/stock-store.service';
+import { NfceService } from '../../services/nfce.service';
 
 @Component({
   selector: 'app-stock-dashboard',
   templateUrl: './stock-dashboard.component.html',
   styleUrls: ['./stock-dashboard.component.scss']
 })
-export class StockDashboardComponent {
+export class StockDashboardComponent implements OnInit {
   readonly itemsPage$: Observable<PagedResult<StockItem>> = this.store.itemsPage$;
   readonly items$: Observable<StockItem[]> = this.store.items$;
   readonly summary$: Observable<StockSummary> = this.store.summary$;
@@ -17,11 +18,28 @@ export class StockDashboardComponent {
   readonly expandedItemId$ = this.store.expandedItemId$;
 
   readonly categories = ['TODOS', 'LATICÍNIOS', 'HORTIFRUTI'];
+  pendingNfceCount = 0;
 
   constructor(
     private readonly store: StockStoreService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly nfceService: NfceService
   ) {}
+
+  ngOnInit(): void {
+    this.loadPendingNfceCount();
+  }
+
+  loadPendingNfceCount(): void {
+    this.nfceService.getHistory('PENDING', 0, 1).subscribe({
+      next: (response) => {
+        this.pendingNfceCount = response.totalPending;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar contagem de NFC-e pendentes:', err);
+      }
+    });
+  }
 
   onQueryChange(query: string) {
     this.store.setQuery(query);
@@ -48,5 +66,9 @@ export class StockDashboardComponent {
 
   navigateToQRReader() {
     this.router.navigate(['/nfce-reader']);
+  }
+
+  navigateToNFCeHistory() {
+    this.router.navigate(['/nfce-history']);
   }
 }
