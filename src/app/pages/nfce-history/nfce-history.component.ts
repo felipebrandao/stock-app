@@ -13,6 +13,7 @@ export class NfceHistoryComponent implements OnInit {
   nfceList: NfceHistoryResponse[] = [];
   loading = false;
   error: string | null = null;
+  retryingNfceIds: Set<string> = new Set();
 
   currentPage = 0;
   pageSize = 10;
@@ -63,13 +64,54 @@ export class NfceHistoryComponent implements OnInit {
     this.router.navigate(['/nfce', nfceId]);
   }
 
+  retryImport(nfceId: string, event: Event): void {
+    event.stopPropagation();
+
+    this.retryingNfceIds.add(nfceId);
+
+    this.nfceService.retryImport(nfceId).subscribe({
+      next: () => {
+        console.log('NFCe reprocessada com sucesso:', nfceId);
+        this.retryingNfceIds.delete(nfceId);
+        this.loadHistory();
+      },
+      error: (err) => {
+        console.error('Erro ao reprocessar NFCe:', err);
+        this.retryingNfceIds.delete(nfceId);
+        alert('Erro ao reprocessar a nota fiscal. Tente novamente.');
+      }
+    });
+  }
+
+  isRetrying(nfceId: string): boolean {
+    return this.retryingNfceIds.has(nfceId);
+  }
+
   formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 
-  formatCurrency(value: number): string {
+  formatCurrency(value: number | null | undefined): string {
+    if (value === null || value === undefined) {
+      return 'R$ --,--';
+    }
     return `R$ ${value.toFixed(2).replace('.', ',')}`;
+  }
+
+  formatAccessKey(accessKey: string | null | undefined): string {
+    if (!accessKey) {
+      return 'Chave não disponível';
+    }
+
+    const cleanKey = accessKey.replace(/\D/g, '');
+
+    if (cleanKey.length !== 44) {
+      return accessKey;
+    }
+
+    const formatted = cleanKey.match(/.{1,4}/g)?.join(' ') || accessKey;
+    return formatted;
   }
 
   getStatusClass(status: string): string {
@@ -85,7 +127,7 @@ export class NfceHistoryComponent implements OnInit {
   getStatusLabel(status: string): string {
     const labelMap: { [key: string]: string } = {
       'IMPORTED': 'Importado',
-      'PROCESSED': 'Processado',
+      'PROCESSED': 'Processando',
       'PENDING': 'Pendente',
       'ERROR': 'Erro'
     };

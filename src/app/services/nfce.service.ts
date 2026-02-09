@@ -55,6 +55,14 @@ export class NfceService {
   }
 
   /**
+   * Reprocessa uma importação de NFCe que falhou
+   * @param id UUID da importação
+   */
+  retryImport(id: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/imports/${id}/retry`, {});
+  }
+
+  /**
    * Busca o histórico de importações de NFCe
    * @param status Filtro de status (opcional, default: 'ALL')
    * @param page Número da página (opcional, default: 0)

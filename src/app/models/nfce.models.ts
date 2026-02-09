@@ -58,18 +58,17 @@ export interface UpdateNfceImportReviewRequest {
   items: UpdateNfceImportReviewItemRequest[];
 }
 
-// History Models
 export interface NfceHistoryResponse {
   id: string;
   accessKey: string;
-  documentNumber: string;
-  importedAt: string; // ISO date-time format
-  processedAt?: string; // ISO date-time format
+  documentNumber: string | null;
+  importedAt: string;
+  processedAt?: string | null;
   status: string;
-  errorMessage?: string;
-  itemCount: number;
-  itemsSummary: string;
-  totalValue: number;
+  errorMessage?: string | null;
+  itemCount: number | null;
+  itemsSummary: string | null;
+  totalValue: number | null;
 }
 
 export interface NfceHistoryPageResponse {

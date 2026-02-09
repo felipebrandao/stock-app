@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
 import { CategoryResponse, CreateProductRequest, ProductResponse } from '../../models/stock.models';
+import { ItemRegistrationResult, ResultModalType } from '../item-registration-result-modal/item-registration-result-modal.component';
 
 export interface NewItemData {
   name: string;
@@ -46,6 +47,10 @@ export class AddItemModalComponent implements OnInit {
   isLoading = false;
   isSaving = false;
   errorMessage = '';
+
+  showResultModal = false;
+  resultModalType: ResultModalType = 'success';
+  resultModalData?: ItemRegistrationResult;
 
   constructor(
     private categoriesService: CategoriesService,
@@ -106,14 +111,25 @@ export class AddItemModalComponent implements OnInit {
     this.productsService.createProduct(request).subscribe({
       next: (product) => {
         this.isSaving = false;
+
+        this.resultModalType = this.nfceContext ? 'success-with-link' : 'success';
+        this.resultModalData = {
+          itemName: product.name,
+          linkedToImport: !!this.nfceContext
+        };
+        this.showResultModal = true;
+
         this.itemCreated.emit(product);
-        this.resetForm();
-        this.close.emit();
       },
       error: (error) => {
         console.error('Error creating product:', error);
-        this.errorMessage = 'Erro ao criar produto. Tente novamente.';
         this.isSaving = false;
+
+        this.resultModalType = 'error';
+        this.resultModalData = {
+          itemName: this.itemName.trim()
+        };
+        this.showResultModal = true;
       }
     });
   }
@@ -128,5 +144,24 @@ export class AddItemModalComponent implements OnInit {
     this.selectedUnit = '';
     this.minStock = undefined;
     this.errorMessage = '';
+  }
+
+  onResultModalClose(): void {
+    this.showResultModal = false;
+
+    if (this.resultModalType !== 'error') {
+      this.resetForm();
+      this.close.emit();
+    }
+  }
+
+  onResultModalContinue(): void {
+    this.showResultModal = false;
+    this.resetForm();
+    this.close.emit();
+  }
+
+  onResultModalRetry(): void {
+    this.showResultModal = false;
   }
 }

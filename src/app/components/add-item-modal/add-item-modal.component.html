@@ -75,11 +75,6 @@
                   {{ category.name }}
                 </option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#61896f]">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
-                  <path d="M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z"></path>
-                </svg>
-              </div>
             </div>
           </div>
 
@@ -95,11 +90,6 @@
                   {{ unit.label }}
                 </option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#61896f]">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
-                  <path d="M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34Zm-96-84.68L128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z"></path>
-                </svg>
-              </div>
             </div>
           </div>
 
@@ -141,3 +131,13 @@
 
   </div>
 </div>
+
+<app-item-registration-result-modal
+  [isOpen]="showResultModal"
+  [type]="resultModalType"
+  [result]="resultModalData"
+  (close)="onResultModalClose()"
+  (continue)="onResultModalContinue()"
+  (retry)="onResultModalRetry()">
+</app-item-registration-result-modal>
+

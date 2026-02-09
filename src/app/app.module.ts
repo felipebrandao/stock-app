@@ -27,6 +27,7 @@ import { AddItemModalComponent } from './components/add-item-modal/add-item-moda
 import { ManageNfceItemModalComponent } from './components/manage-nfce-item-modal/manage-nfce-item-modal.component';
 import { ConfirmRemovalModalComponent } from './components/confirm-removal-modal/confirm-removal-modal.component';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
+import { ItemRegistrationResultModalComponent } from './components/item-registration-result-modal/item-registration-result-modal.component';
 import { FilterPipe } from './pipes/filter.pipe';
 
 @NgModule({
@@ -52,6 +53,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     ManageNfceItemModalComponent,
     ConfirmRemovalModalComponent,
     AppHeaderComponent,
+    ItemRegistrationResultModalComponent,
     FilterPipe
   ],
   imports: [

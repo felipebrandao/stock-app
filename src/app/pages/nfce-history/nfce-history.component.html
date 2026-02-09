@@ -48,7 +48,7 @@
           [class.font-bold]="selectedStatus === 'PROCESSED'"
           class="px-4 py-2 rounded-lg text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
         >
-          Processadas
+          Processando
         </button>
         <button
           (click)="onStatusChange('ERROR')"
@@ -73,7 +73,7 @@
 
         <div class="flex flex-col gap-2 rounded-xl p-6 bg-surface-light dark:bg-surface-dark border border-[#dbe6df] dark:border-[#2a3e30] shadow-sm">
           <div class="flex items-center justify-between">
-            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Processadas</p>
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Processando</p>
             <span class="material-symbols-outlined text-green-500/60">check_circle</span>
           </div>
           <p class="text-[#111813] dark:text-white text-3xl font-black">{{ historyData?.totalProcessed || 0 }}</p>
@@ -144,7 +144,10 @@
                 </div>
                 <div>
                   <div class="flex items-center gap-2 mb-1">
-                    <h3 class="font-bold text-[#111813] dark:text-white">Nota #{{ nfce.documentNumber }}</h3>
+                    <div class="flex flex-col">
+                      <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wide">Chave de acesso:</span>
+                      <h3 class="font-bold text-[#111813] dark:text-white font-mono text-sm">{{ formatAccessKey(nfce.accessKey) }}</h3>
+                    </div>
                     <span
                       class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
                       [ngClass]="getStatusClass(nfce.status)"
@@ -153,17 +156,28 @@
                     </span>
                   </div>
                   <p class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ formatDate(nfce.importedAt) }} • {{ nfce.itemCount }} itens
+                    {{ formatDate(nfce.importedAt) }}
+                    <span *ngIf="nfce.itemCount !== null && nfce.itemCount !== undefined"> • {{ nfce.itemCount }} itens</span>
                     <span *ngIf="nfce.itemsSummary" class="ml-2">• {{ nfce.itemsSummary }}</span>
-                  </p>
-                  <p *ngIf="nfce.errorMessage" class="text-xs text-red-500 dark:text-red-400 mt-1">
-                    {{ nfce.errorMessage }}
                   </p>
                 </div>
               </div>
-              <div class="text-right">
-                <p class="font-bold text-[#111813] dark:text-white">{{ formatCurrency(nfce.totalValue) }}</p>
-                <p class="text-xs text-primary font-medium mt-1">Clique para ver detalhes</p>
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <p class="font-bold text-[#111813] dark:text-white">{{ formatCurrency(nfce.totalValue) }}</p>
+                  <p class="text-xs text-primary font-medium mt-1">Clique para ver detalhes</p>
+                </div>
+                <button
+                  *ngIf="nfce.status === 'ERROR'"
+                  (click)="retryImport(nfce.id, $event)"
+                  [disabled]="isRetrying(nfce.id)"
+                  class="flex items-center justify-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Reprocessar nota fiscal"
+                >
+                  <span *ngIf="!isRetrying(nfce.id)" class="material-symbols-outlined text-sm">refresh</span>
+                  <span *ngIf="isRetrying(nfce.id)" class="animate-spin material-symbols-outlined text-sm">progress_activity</span>
+                  <span>{{ isRetrying(nfce.id) ? 'Reprocessando...' : 'Tentar Novamente' }}</span>
+                </button>
               </div>
             </div>
           </div>
