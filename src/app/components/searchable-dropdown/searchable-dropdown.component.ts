@@ -27,6 +27,7 @@ export class SearchableDropdownComponent implements OnInit, OnChanges, OnDestroy
 
   @Output() itemSelected = new EventEmitter<DropdownItem>();
   @Output() searchChanged = new EventEmitter<string>();
+  @Output() addNewItem = new EventEmitter<string>();
 
   @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
 
@@ -161,15 +162,20 @@ export class SearchableDropdownComponent implements OnInit, OnChanges, OnDestroy
     this.itemSelected.emit(item);
     this.isOpen = false;
     this.searchTerm = '';
-    // Remove listener ao selecionar
     this.removeDocumentClickListener();
-    // Notifica o serviço que este dropdown foi fechado
     this.dropdownManager.closeDropdown(this.dropdownId);
   }
 
-  /**
-   * Suporte a teclado (ESC para fechar)
-   */
+  onAddNewItem(event: MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.addNewItem.emit(this.searchTerm);
+    this.isOpen = false;
+    this.searchTerm = '';
+    this.removeDocumentClickListener();
+    this.dropdownManager.closeDropdown(this.dropdownId);
+  }
+  
   @HostListener('document:keydown.escape')
   onEscapeKey() {
     if (this.isOpen) {
@@ -179,9 +185,6 @@ export class SearchableDropdownComponent implements OnInit, OnChanges, OnDestroy
     }
   }
 
-  /**
-   * Limpa a subscription e listeners ao destruir o componente
-   */
   ngOnDestroy() {
     if (this.closeSubscription) {
       this.closeSubscription.unsubscribe();

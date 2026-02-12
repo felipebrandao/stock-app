@@ -192,6 +192,17 @@ export class ManageNfceItemModalComponent implements OnInit, OnChanges {
     }
   }
 
+  onAddNewItemFromDropdown(searchTerm: string) {
+    if (this.item) {
+      this.nfceItemContext = {
+        description: searchTerm || this.item.description,
+        unit: this.item.unit,
+        quantity: this.item.quantity
+      };
+      this.isAddItemModalOpen = true;
+    }
+  }
+
   closeAddItemModal() {
     this.isAddItemModalOpen = false;
     this.nfceItemContext = undefined;

@@ -82,9 +82,26 @@
 
       <div
         *ngIf="!isLoading && filteredItems.length === 0"
-        class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400"
+        class="p-6 flex flex-col items-center justify-center text-center space-y-3"
       >
-        {{ emptyMessage }}
+        <div class="w-12 h-12 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-gray-400">search_off</span>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-[#111813] dark:text-white">{{ emptyMessage }}</p>
+          <p *ngIf="searchTerm" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Não encontramos "{{ searchTerm }}" no seu estoque.
+          </p>
+        </div>
+        <button
+          *ngIf="addNewItem.observers.length > 0"
+          (mousedown)="onAddNewItem($event)"
+          type="button"
+          class="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 hover:bg-primary/20 text-[#0d9b3c] dark:text-primary font-bold text-sm rounded-lg transition-colors border border-primary/20"
+        >
+          <span class="material-symbols-outlined text-lg">add</span>
+          Adicionar Novo Item
+        </button>
       </div>
     </div>
   </div>

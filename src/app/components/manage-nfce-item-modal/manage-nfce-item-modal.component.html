@@ -65,6 +65,7 @@
               [searchPlaceholder]="'Buscar item...'"
               [emptyMessage]="'Nenhum item encontrado'"
               (itemSelected)="onProductSelected($event)"
+              (addNewItem)="onAddNewItemFromDropdown($event)"
             ></app-searchable-dropdown>
 
             <button
