@@ -20,6 +20,7 @@ import { StockDetailComponent } from './pages/stock-detail/stock-detail.componen
 import { AddStockItemComponent } from './pages/add-stock-item/add-stock-item.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { StorageLocationsComponent } from './pages/storage-locations/storage-locations.component';
+import { UnitsComponent } from './pages/units/units.component';
 import { NfceHistoryComponent } from './pages/nfce-history/nfce-history.component';
 import { NfceDetailComponent } from './pages/nfce-detail/nfce-detail.component';
 import { EditStockItemComponent } from './pages/edit-stock-item/edit-stock-item.component';
@@ -28,6 +29,7 @@ import { ManageNfceItemModalComponent } from './components/manage-nfce-item-moda
 import { ConfirmRemovalModalComponent } from './components/confirm-removal-modal/confirm-removal-modal.component';
 import { AppHeaderComponent } from './components/app-header/app-header.component';
 import { ItemRegistrationResultModalComponent } from './components/item-registration-result-modal/item-registration-result-modal.component';
+import { SearchableDropdownComponent } from './components/searchable-dropdown/searchable-dropdown.component';
 import { FilterPipe } from './pipes/filter.pipe';
 
 @NgModule({
@@ -46,6 +48,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     AddStockItemComponent,
     CategoriesComponent,
     StorageLocationsComponent,
+    UnitsComponent,
     NfceHistoryComponent,
     NfceDetailComponent,
     EditStockItemComponent,
@@ -54,6 +57,7 @@ import { FilterPipe } from './pipes/filter.pipe';
     ConfirmRemovalModalComponent,
     AppHeaderComponent,
     ItemRegistrationResultModalComponent,
+    SearchableDropdownComponent,
     FilterPipe
   ],
   imports: [

@@ -1,0 +1,109 @@
+<div class="bg-background-light dark:bg-background-dark min-h-screen">
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="flex items-center gap-2 mb-6">
+      <a class="text-gray-500 dark:text-gray-400 text-sm hover:underline" href="#">Configurações</a>
+      <span class="material-symbols-outlined text-gray-400 text-sm">chevron_right</span>
+      <span class="text-gray-900 dark:text-white text-sm font-semibold">Unidades</span>
+    </nav>
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Cadastro de Unidades Físicas</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Gerencie as unidades de medida utilizadas no seu estoque.</p>
+    </div>
+
+    <section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-8 shadow-sm">
+      <h3 class="text-base font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">add_circle</span>
+        Nova Unidade
+      </h3>
+      <div class="flex flex-col md:flex-row items-end gap-4">
+        <div class="flex-1 w-full max-w-md">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="unit-name">Nome da Unidade</label>
+          <input
+            class="w-full h-12 rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary focus:ring-primary/20 transition-all placeholder:text-gray-400"
+            id="unit-name"
+            [(ngModel)]="newUnitName"
+            placeholder="Ex: Quilograma, Litro, Unidade..."
+            type="text"
+            (keyup.enter)="addUnit()"
+          />
+        </div>
+        <div class="w-full md:w-48">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="unit-abbreviation">Abreviação</label>
+          <input
+            class="w-full h-12 rounded-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-primary focus:ring-primary/20 transition-all placeholder:text-gray-400"
+            id="unit-abbreviation"
+            [(ngModel)]="newUnitAbbreviation"
+            placeholder="Ex: kg, L, un"
+            type="text"
+            (keyup.enter)="addUnit()"
+          />
+        </div>
+        <button
+          class="h-12 px-8 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+          (click)="addUnit()"
+          [disabled]="!newUnitName.trim() || !newUnitAbbreviation.trim() || isLoading"
+        >
+          <span class="material-symbols-outlined text-xl">add</span>
+          Criar Unidade
+        </button>
+      </div>
+    </section>
+
+    <section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50">
+        <h3 class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Unidades Cadastradas</h3>
+        <span class="text-xs font-medium text-gray-500 bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded">{{ units.length }} Registros</span>
+      </div>
+
+      <div *ngIf="isLoading" class="px-6 py-12 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-gray-300 border-t-primary"></div>
+        <p class="text-gray-500 dark:text-gray-400 mt-4">Carregando...</p>
+      </div>
+
+      <div *ngIf="!isLoading && units.length === 0" class="px-6 py-12 text-center">
+        <span class="material-symbols-outlined text-gray-300 dark:text-gray-600 text-6xl">straighten</span>
+        <p class="text-gray-500 dark:text-gray-400 mt-4">Nenhuma unidade cadastrada ainda.</p>
+      </div>
+
+      <div *ngIf="!isLoading && units.length > 0" class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="text-gray-500 dark:text-gray-400 text-xs font-semibold uppercase tracking-wider bg-gray-50 dark:bg-gray-900/50">
+              <th class="px-6 py-4 border-b border-gray-200 dark:border-gray-800">Nome da Unidade</th>
+              <th class="px-6 py-4 border-b border-gray-200 dark:border-gray-800">Abreviação</th>
+              <th class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+            <tr *ngFor="let unit of units" class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+              <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-white">{{ unit.name }}</td>
+              <td class="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-primary/10 text-primary">
+                  {{ unit.abbreviation }}
+                </span>
+              </td>
+              <td class="px-6 py-3 text-right">
+                <div class="flex justify-end gap-2">
+                  <button class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-all" title="Editar">
+                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                  </button>
+                  <button
+                    class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all"
+                    title="Excluir"
+                    (click)="deleteUnit(unit.id)"
+                    [disabled]="isLoading"
+                  >
+                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+

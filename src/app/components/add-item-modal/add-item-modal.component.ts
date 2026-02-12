@@ -3,6 +3,7 @@ import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
 import { CategoryResponse, CreateProductRequest, ProductResponse } from '../../models/stock.models';
 import { ItemRegistrationResult, ResultModalType } from '../item-registration-result-modal/item-registration-result-modal.component';
+import { DropdownItem } from '../searchable-dropdown/searchable-dropdown.component';
 
 export interface NewItemData {
   name: string;
@@ -34,6 +35,9 @@ export class AddItemModalComponent implements OnInit {
   minStock?: number;
 
   categories: CategoryResponse[] = [];
+  categoryDropdownItems: DropdownItem[] = [];
+  selectedCategoryDropdownItem: DropdownItem | null = null;
+  isLoadingCategories = false;
   units = [
     { value: 'UN', label: 'UN (Unidade)' },
     { value: 'L', label: 'L (Litro)' },
@@ -69,16 +73,20 @@ export class AddItemModalComponent implements OnInit {
   }
 
   loadCategories(): void {
-    this.isLoading = true;
+    this.isLoadingCategories = true;
     this.categoriesService.getCategories(0, 100).subscribe({
       next: (response) => {
         this.categories = response.content;
-        this.isLoading = false;
+        this.categoryDropdownItems = response.content.map(cat => ({
+          id: cat.id,
+          name: cat.name
+        }));
+        this.isLoadingCategories = false;
       },
       error: (error) => {
         console.error('Error loading categories:', error);
         this.errorMessage = 'Erro ao carregar categorias';
-        this.isLoading = false;
+        this.isLoadingCategories = false;
       }
     });
   }
@@ -89,6 +97,11 @@ export class AddItemModalComponent implements OnInit {
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+
+  onCategorySelected(item: DropdownItem): void {
+    this.selectedCategoryDropdownItem = item;
+    this.selectedCategoryId = item.id;
   }
 
   onClose(): void {
@@ -141,6 +154,7 @@ export class AddItemModalComponent implements OnInit {
   resetForm(): void {
     this.itemName = '';
     this.selectedCategoryId = '';
+    this.selectedCategoryDropdownItem = null;
     this.selectedUnit = '';
     this.minStock = undefined;
     this.errorMessage = '';

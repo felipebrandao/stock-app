@@ -63,22 +63,22 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2 relative z-20">
             <label class="text-[#111813] dark:text-gray-200 text-base font-medium leading-normal">
               Categoria
             </label>
-            <div class="relative">
-              <select [(ngModel)]="selectedCategoryId"
-                      class="form-select w-full appearance-none rounded-lg text-[#111813] dark:text-white border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-[#14231a] focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 pr-10 text-base">
-                <option value="" disabled>Selecione uma categoria</option>
-                <option *ngFor="let category of categories" [value]="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
-            </div>
+            <app-searchable-dropdown
+              [items]="categoryDropdownItems"
+              [selectedItem]="selectedCategoryDropdownItem"
+              [isLoading]="isLoadingCategories"
+              [placeholder]="'Selecione uma categoria...'"
+              [searchPlaceholder]="'Buscar categoria...'"
+              [emptyMessage]="'Nenhuma categoria encontrada'"
+              (itemSelected)="onCategorySelected($event)"
+            ></app-searchable-dropdown>
           </div>
 
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2 relative z-10">
             <label class="text-[#111813] dark:text-gray-200 text-base font-medium leading-normal">
               Unidade Padrão
             </label>

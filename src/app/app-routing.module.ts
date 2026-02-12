@@ -6,6 +6,7 @@ import { StockDetailComponent } from './pages/stock-detail/stock-detail.componen
 import { AddStockItemComponent } from './pages/add-stock-item/add-stock-item.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { StorageLocationsComponent } from './pages/storage-locations/storage-locations.component';
+import { UnitsComponent } from './pages/units/units.component';
 import { NfceHistoryComponent } from './pages/nfce-history/nfce-history.component';
 import { NfceDetailComponent } from './pages/nfce-detail/nfce-detail.component';
 import { EditStockItemComponent } from './pages/edit-stock-item/edit-stock-item.component';
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'stock/:id/edit', component: EditStockItemComponent },
   { path: 'categories', component: CategoriesComponent },
   { path: 'storage-locations', component: StorageLocationsComponent },
+  { path: 'units', component: UnitsComponent },
   { path: 'nfce-reader', component: NfceQrReaderComponent },
   { path: 'nfce-history', component: NfceHistoryComponent },
   { path: 'nfce/:id', component: NfceDetailComponent },

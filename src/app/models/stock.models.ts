@@ -35,6 +35,13 @@ export interface LocationResponse {
   createdAt: string;
 }
 
+export interface UnitResponse {
+  id: string;
+  name: string;
+  abbreviation: string;
+  createdAt: string;
+}
+
 export interface StockMovementResponse {
   id: string;
   type: StockMovementType;
@@ -72,6 +79,11 @@ export interface CreateCategoryRequest {
 export interface CreateLocationRequest {
   name: string;
   description?: string;
+}
+
+export interface CreateUnitRequest {
+  name: string;
+  abbreviation: string;
 }
 
 export interface CreateStockMovementRequest {

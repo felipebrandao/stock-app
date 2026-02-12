@@ -97,6 +97,18 @@
               <span class="material-symbols-outlined text-[18px]">shelves</span>
               Locais de Armazenamento
             </a>
+            <a
+              class="flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider transition-all"
+              [ngClass]="{
+                'text-primary bg-primary/5 dark:bg-primary/10': currentRoute === '/units',
+                'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-primary/5 hover:text-primary': currentRoute !== '/units'
+              }"
+              routerLink="/units"
+              (click)="closeConfigMenu()"
+            >
+              <span class="material-symbols-outlined text-[18px]">straighten</span>
+              Unidades Físicas
+            </a>
             <div class="border-t border-gray-100 dark:border-[#2a3e30] my-1"></div>
             <a
               class="flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-primary/5 hover:text-primary transition-all uppercase tracking-wider"

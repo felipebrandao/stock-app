@@ -1,28 +1,86 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, OnChanges } from '@angular/core';
 import { NfceImportReviewItemResponse } from '../../models/nfce.models';
-import { ProductResponse } from '../../models/stock.models';
+import { ProductResponse, LocationResponse } from '../../models/stock.models';
 import { NfceItemContext } from '../add-item-modal/add-item-modal.component';
+import { ProductsService } from '../../services/products.service';
+import { LocationsService } from '../../services/locations.service';
+import { DropdownItem } from '../searchable-dropdown/searchable-dropdown.component';
 
 @Component({
   selector: 'app-manage-nfce-item-modal',
   templateUrl: './manage-nfce-item-modal.component.html',
   styleUrls: ['./manage-nfce-item-modal.component.scss']
 })
-export class ManageNfceItemModalComponent {
+export class ManageNfceItemModalComponent implements OnInit, OnChanges {
   @Input() isOpen = false;
   @Input() item: NfceImportReviewItemResponse | null = null;
   @Output() close = new EventEmitter<void>();
   @Output() confirm = new EventEmitter<any>();
 
-  productSearch = '';
   quantity = 1;
   unit = 'un';
   locationId = '';
   expiryDate = '';
   status = 'CLOSED';
 
+  products: ProductResponse[] = [];
+  selectedProduct: ProductResponse | null = null;
+  isLoadingProducts = false;
+
+  locations: LocationResponse[] = [];
+  selectedLocation: LocationResponse | null = null;
+  isLoadingLocations = false;
+
+  selectedUnit: { value: string; label: string } | null = null;
+
   isAddItemModalOpen = false;
   nfceItemContext?: NfceItemContext;
+
+  constructor(
+    private productsService: ProductsService,
+    private locationsService: LocationsService
+  ) {}
+
+  get productDropdownItems(): DropdownItem[] {
+    return this.products.map(p => ({ id: p.id, name: p.name }));
+  }
+
+  get selectedProductDropdownItem(): DropdownItem | null {
+    return this.selectedProduct ? { id: this.selectedProduct.id, name: this.selectedProduct.name } : null;
+  }
+
+  get locationDropdownItems(): DropdownItem[] {
+    return this.locations.map(l => ({
+      id: l.id,
+      name: l.name,
+      description: l.description
+    }));
+  }
+
+  get selectedLocationDropdownItem(): DropdownItem | null {
+    return this.selectedLocation ? {
+      id: this.selectedLocation.id,
+      name: this.selectedLocation.name,
+      description: this.selectedLocation.description
+    } : null;
+  }
+
+  get unitDropdownItems(): DropdownItem[] {
+    return this.units.map(u => ({
+      id: u.value,
+      name: u.value.toUpperCase(),
+      description: u.label
+    }));
+  }
+
+  get selectedUnitDropdownItem(): DropdownItem | null {
+    if (!this.selectedUnit) return null;
+    return {
+      id: this.selectedUnit.value,
+      name: this.selectedUnit.value.toUpperCase(),
+      description: this.selectedUnit.label
+    };
+  }
 
   units = [
     { value: 'un', label: 'Unidade (UN)' },
@@ -35,21 +93,73 @@ export class ManageNfceItemModalComponent {
     { value: 'g', label: 'Grama (G)' }
   ];
 
+  ngOnInit() {
+    this.loadProducts();
+    this.loadLocations();
+    this.selectedUnit = this.units.find(u => u.value === this.unit) || this.units[0];
+  }
+
   ngOnChanges() {
     if (this.item) {
       this.quantity = this.item.quantity || 1;
       this.unit = this.item.unit || 'un';
+      // Atualiza a unidade selecionada
+      this.selectedUnit = this.units.find(u => u.value === this.unit) || this.units[0];
     }
   }
 
+  loadProducts() {
+    this.isLoadingProducts = true;
+    this.productsService.getProducts(0, 100).subscribe({
+      next: (response) => {
+        this.products = response.content;
+        this.isLoadingProducts = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar produtos:', error);
+        this.isLoadingProducts = false;
+      }
+    });
+  }
+
+  loadLocations() {
+    this.isLoadingLocations = true;
+    this.locationsService.getLocations(0, 100).subscribe({
+      next: (response) => {
+        this.locations = response.content.filter(loc => loc.active);
+        this.isLoadingLocations = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar locais:', error);
+        this.isLoadingLocations = false;
+      }
+    });
+  }
+
+  onProductSelected(item: DropdownItem) {
+    this.selectedProduct = this.products.find(p => p.id === item.id) || null;
+  }
+
+  onLocationSelected(item: DropdownItem) {
+    this.selectedLocation = this.locations.find(l => l.id === item.id) || null;
+    this.locationId = item.id;
+  }
+
+  onUnitSelected(item: DropdownItem) {
+    this.selectedUnit = this.units.find(u => u.value === item.id) || null;
+    this.unit = item.id; // Mantém compatibilidade com código existente
+  }
+
   onClose() {
+    this.resetForm();
     this.close.emit();
   }
 
   onConfirm() {
     const data = {
       itemId: this.item?.id,
-      productSearch: this.productSearch,
+      productId: this.selectedProduct?.id,
+      productName: this.selectedProduct?.name,
       quantity: this.quantity,
       unit: this.unit,
       locationId: this.locationId,
@@ -57,6 +167,18 @@ export class ManageNfceItemModalComponent {
       status: this.status
     };
     this.confirm.emit(data);
+    this.resetForm();
+  }
+
+  resetForm() {
+    this.selectedProduct = null;
+    this.selectedLocation = null;
+    this.selectedUnit = this.units.find(u => u.value === 'un') || this.units[0];
+    this.quantity = 1;
+    this.unit = 'un';
+    this.locationId = '';
+    this.expiryDate = '';
+    this.status = 'CLOSED';
   }
 
   openAddItemModal() {
@@ -77,7 +199,8 @@ export class ManageNfceItemModalComponent {
 
   onItemCreated(product: ProductResponse) {
     console.log('Novo produto criado:', product);
-    this.productSearch = product.name;
+    this.products.push(product);
+    this.selectedProduct = product;
     this.closeAddItemModal();
   }
 
